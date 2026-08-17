@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Controle local para fita LED Bluetooth LEDBLE-01 usando Web Bluetooth."
+    />
+    <title>Aura BLE | Controle da Fita LED</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="backdrop backdrop-a" aria-hidden="true"></div>
+    <div class="backdrop backdrop-b" aria-hidden="true"></div>
+    <main class="shell">
+      <section class="hero panel reveal">
+        <div class="hero-copy">
+          <span class="eyebrow">Controle local por Bluetooth</span>
+          <h1>Aura BLE</h1>
+          <p class="hero-text">
+            Um painel feito para controlar fitas LED do tipo
+            <code>LEDBLE-01</code> direto do seu PC, sem depender do app da
+            loja.
+          </p>
+        </div>
+        <div class="hero-status">
+          <span class="status-label">Status</span>
+          <strong id="connectionBadge" class="badge badge-idle">Desconectado</strong>
+          <span id="secureContextLabel" class="mini-note">Verificando navegador...</span>
+        </div>
+      </section>
+
+      <section class="grid">
+        <article class="panel reveal">
+          <div class="panel-head">
+            <div>
+              <p class="kicker">Conexao</p>
+              <h2>Emparelhar a fita</h2>
+            </div>
+            <span id="signalChip" class="chip">Pronto para buscar</span>
+          </div>
+
+          <label class="field" for="namePrefixInput">
+            <span>Filtro do nome Bluetooth</span>
+            <input
+              id="namePrefixInput"
+              name="namePrefixInput"
+              type="text"
+              value="LEDBLE-01"
+              autocomplete="off"
+              spellcheck="false"
+            />
+          </label>
+
+          <div class="device-card">
+            <span class="device-label">Dispositivo atual</span>
+            <strong id="deviceName">Nenhum dispositivo conectado</strong>
+            <small id="deviceMeta">Clique em conectar para escolher a fita no navegador.</small>
+          </div>
+
+          <div class="button-row">
+            <button id="connectButton" class="primary-button">Buscar e conectar</button>
+            <button id="disconnectButton" class="ghost-button" disabled>Desconectar</button>
+          </div>
+
+          <p id="browserSupportMessage" class="support-copy">
+            Este painel precisa de um navegador com suporte a Web Bluetooth.
+          </p>
+        </article>
+
+        <article class="panel reveal">
+          <div class="panel-head">
+            <div>
+              <p class="kicker">Luz</p>
+              <h2>Controles principais</h2>
+            </div>
+            <span id="lastActionPill" class="chip subtle">Nenhum comando enviado</span>
+          </div>
+
+          <div class="power-row">
+            <button id="powerToggle" class="power-button" disabled>Ligar fita</button>
+            <button id="powerOffButton" class="ghost-button" disabled>Apagar agora</button>
+          </div>
+
+          <div class="color-card">
+            <div id="colorPreview" class="color-preview" aria-hidden="true"></div>
+            <div class="color-controls">
+              <label class="field" for="colorInput">
+                <span>Cor principal</span>
+                <div class="color-picker-row">
+                  <input id="colorInput" name="colorInput" type="color" value="#ff5a5f" disabled />
+                  <button id="applyColorButton" class="secondary-button" disabled>
+                    Aplicar cor
+                  </button>
+                </div>
+              </label>
+
+              <div id="presetGrid" class="preset-grid" aria-label="Cores rapidas"></div>
+            </div>
+          </div>
+
+          <div class="slider-grid">
+            <label class="field" for="brightnessRange">
+              <span>Brilho <output id="brightnessValue">100%</output></span>
+              <input
+                id="brightnessRange"
+                name="brightnessRange"
+                type="range"
+                min="0"
+                max="100"
+                value="100"
+                disabled
+              />
+            </label>
+
+            <label class="field" for="speedRange">
+              <span>Velocidade do efeito <output id="speedValue">65%</output></span>
+              <input
+                id="speedRange"
+                name="speedRange"
+                type="range"
+                min="0"
+                max="100"
+                value="65"
+                disabled
+              />
+            </label>
+          </div>
+
+          <label class="field" for="effectSelect">
+            <span>Efeitos do controlador</span>
+            <select id="effectSelect" name="effectSelect" disabled>
+              <option value="">Selecione um efeito</option>
+            </select>
+          </label>
+        </article>
+
+        <article class="panel reveal">
+          <div class="panel-head">
+            <div>
+              <p class="kicker">Monitor</p>
+              <h2>Pacotes enviados</h2>
+            </div>
+            <button id="clearLogButton" class="ghost-button small-button">Limpar log</button>
+          </div>
+
+          <div class="stats">
+            <div class="stat-card">
+              <span>Ultimo comando</span>
+              <strong id="lastActionText">Nenhum</strong>
+            </div>
+            <div class="stat-card">
+              <span>Brilho atual</span>
+              <strong id="brightnessStat">100%</strong>
+            </div>
+            <div class="stat-card">
+              <span>Velocidade</span>
+              <strong id="speedStat">65%</strong>
+            </div>
+          </div>
+
+          <pre id="logOutput" class="log-output">[Aura BLE] Pronto para conectar.</pre>
+        </article>
+
+        <article class="panel reveal">
+          <div class="panel-head">
+            <div>
+              <p class="kicker">Guia rapido</p>
+              <h2>Como usar</h2>
+            </div>
+            <span class="chip subtle">Sem instalacao extra</span>
+          </div>
+
+          <ol class="steps">
+            <li>O jeito recomendado e usar <code>start-aura-ble.bat</code>.</li>
+            <li>Clique em <strong>Buscar e conectar</strong> e escolha sua fita <code>LEDBLE-01</code>.</li>
+            <li>Depois da conexao, use os botoes para ligar, trocar cor e ajustar brilho.</li>
+            <li>Se quiser animacoes, escolha um item da lista de efeitos e ajuste a velocidade.</li>
+          </ol>
+
+          <div class="info-box">
+            <strong>Dica:</strong>
+            <p>
+              O navegador vai pedir permissao de Bluetooth. Se esta pagina foi
+              aberta como <code>file://</code> ou dentro de um navegador que nao
+              expoe Web Bluetooth, use o launcher local para abrir em
+              <code>http://localhost</code>.
+            </p>
+            <p>
+              Se o app <code>LED Lamp</code> do celular estiver conectado na
+              fita, desconecte primeiro ou desligue o Bluetooth do celular.
+            </p>
+          </div>
+        </article>
+      </section>
+    </main>
+
+    <script src="./app.js" defer></script>
+  </body>
+</html>
